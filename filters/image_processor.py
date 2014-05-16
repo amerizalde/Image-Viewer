@@ -1,10 +1,9 @@
-from pprint import pprint
 import pygame
 import basic_modes as basic
 import advanced_modes as adv
 
 from sys import argv
-
+from pprint import pprint
 
 class Layer(object):
     
@@ -32,9 +31,13 @@ class Layer(object):
     }
 
     def __init__(self, filename):
+        """ Can create a new layer from a Surface or from an image on disk. """
         try:
-            self._pixels = pygame.surfarray.array3d(
-                pygame.image.load(filename))
+            if type(filename) == pygame.Surface:
+                self._pixels = pygame.surfarray.array3d(filename)
+            else:
+                self._pixels = pygame.surfarray.array3d(
+                    pygame.image.load(filename))
             self.pixels = self._pixels
         except pygame.error, message:
             print "Cannot load image:", filename
@@ -46,8 +49,8 @@ class Layer(object):
         """
         for i in self.pixels:
             pprint(i)
+            i_r, i_g, i_b = i[0], i[1], i[2]
             for j in other_image.pixels:
-                i_r, i_g, i_b = i[0], i[1], i[2]
                 j_r, j_g, j_b = j[0], j[1], j[2]
 
                 i_r = func(i_r, j_r)
@@ -112,7 +115,7 @@ def saveSurface(pixels, filename):
     try:
         surf = pygame.surfarray.make_surface(pixels)
     except IndexError, message:
-        print message
+        print "{}\n{}\n".format(IndexError, message)
         (width, height, colors) = pixels.shape
         surf = pygame.display.set_mode((width, height))
         pygame.surfarray.blit_array(surf, pixels)
@@ -128,14 +131,20 @@ if __name__ == "__main__":
     green_channel = Layer('gollum.jpg')
     blue_channel = Layer('gollum.jpg')
     x, y, z = a.pixels.shape
-    for i in xrange(x):
-        for j in xrange(y):
-            ii = i
-            jj = j
-            red_channel.pixels[ii, jj] = a.pixels[ii, jj] * [1, 0, 0]
-            green_channel.pixels[ii, jj] = a.pixels[ii, jj] * [0, 1, 0]
-            blue_channel.pixels[ii, jj] = a.pixels[ii, jj] * [0, 0, 1]
+    # for i in xrange(x):
+    #     for j in xrange(y):
+    #         ii = i
+    #         jj = j
+    #         red_channel.pixels[ii, jj] =    a.pixels[ii, jj] * [1, 0, 0]
+    #         green_channel.pixels[ii, jj] =  a.pixels[ii, jj] * [0, 1, 0]
+    #         blue_channel.pixels[ii, jj] =   a.pixels[ii, jj] * [0, 0, 1]
 
-    red_channel.saveLayer('red_channel.jpg')
-    green_channel.saveLayer('green_channel.jpg')
-    blue_channel.saveLayer('blue_channel.jpg')
+
+    # (width, height, colors) = a.pixels.shape
+    # gray = pygame.Surface((width, height))
+    # gray.fill((128, 128, 128))
+    # gray = Layer(gray)
+    # gray.saveLayer('multiply.jpg')
+    # red_channel.saveLayer('red_channel.jpg')
+    # green_channel.saveLayer('green_channel.jpg')
+    # blue_channel.saveLayer('blue_channel.jpg')
