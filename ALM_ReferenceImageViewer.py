@@ -1,6 +1,7 @@
 import sys, os, inspect
 from PySide import QtGui, QtCore
 
+# TODO : update for py3
 
 images = []
 pix = []
@@ -13,7 +14,7 @@ TITLE = "Image Viewer"
 
 class ScrollArea(QtGui.QScrollArea):
     """
-        Small change to the default scroll area,
+        Small change to the default ScrollArea widget,
         that makes scrolling the mouse wheel re-scale the image
         instead of scrolling around in the window.
         Also, holding left button down while moving the mouse pans the
@@ -39,6 +40,7 @@ class ScrollArea(QtGui.QScrollArea):
                         self.ZoomIn(images[i], i)
 
     def mouseReleaseEvent(self, e):
+        # not how I want it to work, but works
     	global REMOVE
     	if self.childAt(e.pos()) and REMOVE == True:
     		self.close()
@@ -58,6 +60,7 @@ class ScrollArea(QtGui.QScrollArea):
     	self.currentPosV = self.verticalScrollBar().value()
 
     def ResizeImage(self, widget, pix_index):
+        """ scale an image without changing it's aspect ratio."""
         image = pix[pix_index]
         if image:
             image = image.scaled(image.size() * self.scaleF, QtCore.Qt.KeepAspectRatio)
@@ -105,7 +108,7 @@ class Window(QtGui.QWidget):
         self.vbox.addWidget(self.mainGroup)
         self.vbox.addWidget(self.cpGroup)
 
-        # adjust properties after adding widgets/layouts to the layout
+        # adjust properties AFTER adding widgets/layouts to the layout
         self.mainGroup.setAlignment(QtCore.Qt.AlignRight)
         self.mainGroup.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
         self.cpGroup.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Maximum))
